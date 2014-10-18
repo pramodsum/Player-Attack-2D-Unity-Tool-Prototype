@@ -15,7 +15,7 @@ This is just like any other script used in Unity where you can drag and drop it 
 Public Functions
 ================
 
-```
+```C#
 //REQUIRES: 
 //MODIFIES: 
 //EFFECTS: 
