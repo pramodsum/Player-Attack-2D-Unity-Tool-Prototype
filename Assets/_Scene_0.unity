@@ -86,7 +86,7 @@ GameObject:
   - 114: {fileID: 165920123}
   m_Layer: 0
   m_Name: penguin
-  m_TagString: Player
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -94,8 +94,9 @@ GameObject:
 --- !u!114 &165920123
 MonoBehaviour:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
+  m_PrefabParentObject: {fileID: 11400000, guid: 416f03f181c4a474181e0789548b06e1,
+    type: 2}
+  m_PrefabInternal: {fileID: 1430571076}
   m_GameObject: {fileID: 165920122}
   m_Enabled: 1
   m_EditorHideFlags: 0
@@ -104,25 +105,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 6
   damage: .5
-  inventory:
-  - {fileID: 100000, guid: 3dcdce4eecaca4bc1907f0e912158ea4, type: 2}
+  inventory: []
   itemsCollected: 
   allowDiagonalMovement: 0
   isPlatformer: 0
-  jumpHeight: 50
-  weight: 2
+  jumpHeight: 5
+  weight: 0
   jetpackEnabled: 0
   _______________________: 0
   weapon1: {fileID: 100000, guid: d22ab1e981a31460393ad8e1e79a6194, type: 2}
   attackKey1: Z
-  w1IsShootable: 0
+  w1IsBombable: 0
   w1IsJabbable: 1
   w1Strength: 0
-  w1out: 0
   ________________________: 0
   weapon2: {fileID: 100000, guid: 04e16a54c5e724a688daa6cf17253f62, type: 2}
   attackKey2: X
-  w2IsShootable: 1
+  w2IsBombable: 1
   w2IsJabbable: 0
   w2Strength: 0
 --- !u!212 &165920124
@@ -462,20 +461,10 @@ Prefab:
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 11400000, guid: 416f03f181c4a474181e0789548b06e1, type: 2}
-      propertyPath: health
-      value: 100
+      propertyPath: w2IsBombable
+      value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 11400000, guid: 416f03f181c4a474181e0789548b06e1, type: 2}
-      propertyPath: damage
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 100000, guid: 416f03f181c4a474181e0789548b06e1, type: 2}
-      propertyPath: m_TagString
-      value: Player
-      objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 11400000, guid: 416f03f181c4a474181e0789548b06e1, type: 2}
-    - {fileID: 0}
+    m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 416f03f181c4a474181e0789548b06e1, type: 2}
   m_RootGameObject: {fileID: 165920122}
   m_IsPrefabParent: 0

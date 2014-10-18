@@ -1,8 +1,10 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workspace />
   <MonoDevelop.Ide.Workbench ActiveDocument="Assets/scripts/PlayerScript.cs">
     <Files>
-      <File FileName="Assets/scripts/PlayerScript.cs" Line="49" Column="12" />
+      <File FileName="Assets/scripts/PlayerScript.cs" Line="21" Column="18" />
+      <File FileName="../eecs494/LegendOfZelda/Assets/Scripts/SwordAttack.cs" Line="17" Column="57" />
+      <File FileName="../eecs494/LegendOfZelda/Assets/Scripts/SwordCollision.cs" Line="16" Column="3" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

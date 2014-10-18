@@ -26,12 +26,12 @@ public class PlayerScript : MonoBehaviour
 				public GameObject weapon;
 				public GameObject attack;
 				public string attackKey;
-				public bool isShootable = false;
+				public bool isBombable = false;
 				public bool isJabbable = false;
 		
 				public float speed = 8f;
 				public bool weaponOut = false;
-				public float timeSinceShoot = 0f;
+				public float timeSinceBomb = 0f;
 
 				public float strength;
 		
@@ -39,7 +39,7 @@ public class PlayerScript : MonoBehaviour
 				{
 						weapon = w;
 						attackKey = a;
-						isShootable = s;
+						isBombable = s;
 						isJabbable = j;
 						strength = p;
 				}
@@ -76,10 +76,9 @@ public class PlayerScript : MonoBehaviour
 		Weapon w1;
 		public GameObject weapon1;
 		public string attackKey1;
-		public bool w1IsShootable = false;
+		public bool w1IsBombable = false;
 		public bool w1IsJabbable = false;
 		public float w1Strength;
-		public bool w1out = false;
 	
 		//Divider
 		public bool ________________________;
@@ -90,7 +89,7 @@ public class PlayerScript : MonoBehaviour
 		Weapon w2;
 		public GameObject weapon2;
 		public string attackKey2;
-		public bool w2IsShootable = false;
+		public bool w2IsBombable = false;
 		public bool w2IsJabbable = false;
 		public float w2Strength;
 	
@@ -103,8 +102,8 @@ public class PlayerScript : MonoBehaviour
 						itemsCollected.Add (0);
 				}
 		
-				w1 = initWeapon (weapon1, attackKey1.ToLower (), w1IsShootable, w1IsJabbable, w1Strength);
-				w2 = initWeapon (weapon2, attackKey2.ToLower (), w2IsShootable, w2IsJabbable, w2Strength);
+				w1 = initWeapon (weapon1, attackKey1.ToLower (), w1IsBombable, w1IsJabbable, w1Strength);
+				w2 = initWeapon (weapon2, attackKey2.ToLower (), w2IsBombable, w2IsJabbable, w2Strength);
 		}
 	
 		void FixedUpdate ()
@@ -121,10 +120,7 @@ public class PlayerScript : MonoBehaviour
 		{
 				Debug.Log (coll.gameObject.name);
 				if (coll.gameObject.tag == "Enemy") {
-						if (w1.weaponOut || w2.weaponOut)
-								Destroy (coll.gameObject);
-						else 
-								health -= damage;
+						health -= damage;
 				} else if (coll.gameObject.tag == "Ground" && isPlatformer) {
 						rigidbody2D.velocity = Vector2.zero;
 						grounded = true;
@@ -151,8 +147,8 @@ public class PlayerScript : MonoBehaviour
 		{
 				if (w.isJabbable)
 						jab (w, new Vector3 (faceDirection.x, faceDirection.y, 0));
-				else if (w.isShootable)
-						shoot (w, new Vector3 (faceDirection.x, faceDirection.y, 0));
+				else if (w.isBombable)
+						bomb (w, new Vector3 (faceDirection.x, faceDirection.y, 0));
 		}
 	
 		public void jab (Weapon w, Vector3 dir)
@@ -165,24 +161,15 @@ public class PlayerScript : MonoBehaviour
 								w.attack.transform.parent = transform;
 
 						w.weaponOut = true;
-						w1out = true;
 				}
 		}
 	
-		public void shoot (Weapon w, Vector3 dir)
+		public void bomb (Weapon w, Vector3 dir)
 		{
 				if (!w.weaponOut) {
 						w.attack = Instantiate (w.weapon, transform.position + dir, Quaternion.identity) as GameObject;
-						w.weapon.rigidbody2D.velocity += faceDirection * w.speed;
+						w.weapon.rigidbody2D.velocity = faceDirection * w.speed;
 						w.weaponOut = true;
-				}
-		}
-
-		public void wait (float t)
-		{
-				float time = 0;
-				while (time < t) {
-						time += Time.fixedDeltaTime;
 				}
 		}
 	
@@ -224,10 +211,12 @@ public class PlayerScript : MonoBehaviour
 				}
 		}
 	
-		private Weapon initWeapon (GameObject weapon, string key, bool shoot, bool jab, float strength)
+		private Weapon initWeapon (GameObject weapon, string key, bool bomb, bool jab, float strength)
 		{
-				if (!weapon.collider2D)
+				if (!weapon.collider2D && jab)
 						weapon.AddComponent<PolygonCollider2D> ();
+				if (!weapon.collider2D && bomb)
+						weapon.AddComponent<BoxCollider2D> ();
 		
 				if (!weapon.rigidbody2D)
 						weapon.AddComponent<Rigidbody2D> ();
@@ -237,18 +226,19 @@ public class PlayerScript : MonoBehaviour
 				weapon.rigidbody2D.angularDrag = 0;
 				weapon.rigidbody2D.fixedAngle = true;
 		
-				weapon.rigidbody2D.isKinematic = false;
-				weapon.collider2D.isTrigger = false;
-		
-				if (shoot) {
-						weapon.rigidbody2D.isKinematic = true;
-						weapon.collider2D.isTrigger = true;
-						weapon.rigidbody2D.gravityScale = 1;
-				}
+				weapon.gameObject.tag = "Weapon";
 
-//				weapon.gameObject.tag = "Weapon";
+				if (!weapon.GetComponent<WeaponScript> ())
+						weapon.AddComponent<WeaponScript> ();
+
+				if (jab) {
+						weapon.rigidbody2D.isKinematic = false;
+						weapon.collider2D.isTrigger = false;
+				} else {
+						weapon.GetComponent<WeaponScript> ().isBombable = true;
+				}
 		
-				return new Weapon (weapon, key, shoot, jab, strength);
+				return new Weapon (weapon, key, bomb, jab, strength);
 		}
 	
 		private void checkSettings ()
@@ -257,10 +247,10 @@ public class PlayerScript : MonoBehaviour
 				if (string.IsNullOrEmpty (attackKey1) || string.IsNullOrEmpty (attackKey2)) 
 						errorMessage ("Assign Attack Keys", "Please Assign Attack Keys for Player");
 		
-				if (w1IsJabbable == w1IsShootable) 
+				if (w1IsJabbable == w1IsBombable) 
 						errorMessage ("Weapon 1 Error", "Please pick only one action type for weapon 1");
 		
-				if (w2IsJabbable == w2IsShootable) 
+				if (w2IsJabbable == w2IsBombable) 
 						errorMessage ("Weapon 2 error", "Please pick only one action type for weapon 2");
 
 				if (inventory.Count == 0) 
@@ -280,18 +270,6 @@ public class PlayerScript : MonoBehaviour
 				if (Application.isEditor) {
 						EditorUtility.DisplayDialog (title, msg, "Ok");
 				}
-		}
-	
-		private void checkShotWeapon (Weapon w)
-		{
-				if (w.timeSinceShoot < 1) {
-						w.timeSinceShoot += Time.fixedDeltaTime;
-						return;
-				}
-		
-				w.timeSinceShoot = 0;
-				w.weaponOut = false;
-				Destroy (w.attack);
 		}
 
 		//TODO: flip player image based on left/right movement
@@ -362,12 +340,8 @@ public class PlayerScript : MonoBehaviour
 						attack (w);
 				} else if (Input.GetKeyUp (w.attackKey) && w.isJabbable) {
 						w.weaponOut = false;
-						w1out = false;
 						Destroy (w.attack);
 				} 
-			
-				if (w.isShootable)
-						checkShotWeapon (w);
 		}
 
 		//TODO: rotate jab image based on direction 
