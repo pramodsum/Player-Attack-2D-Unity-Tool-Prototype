@@ -15,10 +15,23 @@ This is just like any other script used in Unity where you can drag and drop it 
 Public Functions
 ================
 
-```C#
+```
 //REQUIRES: 
 //MODIFIES: 
 //EFFECTS: 
 //RETURNS: 
+public void attack (Weapon w);
+		
+//REQUIRES: 
+//MODIFIES: 
+//EFFECTS: 
+//RETURNS: 
+public void jab (Weapon w, Vector3 dir);
+
+//REQUIRES: 
+//MODIFIES: 
+//EFFECTS: 
+//RETURNS: 
+public void shoot (Weapon w, Vector3 dir);
 
 ```

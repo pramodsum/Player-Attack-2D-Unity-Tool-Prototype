@@ -20,7 +20,7 @@ public class PlayerScript : MonoBehaviour
 		 * WEAPON CLASS
 		 * 
 		 ****************************************************************************/
-		protected class Weapon
+		public class Weapon
 		{
 				public GameObject weapon;
 				public GameObject attack;
@@ -50,11 +50,13 @@ public class PlayerScript : MonoBehaviour
 		Vector2 faceDirection;
 		public bool allowDiagonalMovement = false;
 		public bool isPlatformer = false;
-		public float jumpHeight = 5f;
-		public float weight = 0f;
-
+		public float jumpHeight = 50f;
+		public float weight = 2f;
+		public bool jetpackEnabled;
 		public float health;
 		public float damage;
+
+		bool grounded;
 	
 		//Divider
 		public bool _______________________;
@@ -105,15 +107,19 @@ public class PlayerScript : MonoBehaviour
 		{
 				if (coll.gameObject.tag == "Enemy")
 						health -= damage;
+				if (coll.gameObject.tag == "Ground") {
+						rigidbody2D.velocity = Vector2.zero;
+						grounded = true;
+				}
 		}
 	
 		/****************************************************************************
 		 * 
-		 * PROTECTED METHODS
+		 * PUBLIC METHODS
 		 * 
 		 ****************************************************************************/
 	
-		protected void attack (Weapon w)
+		public void attack (Weapon w)
 		{
 				Vector3 dir = new Vector3 (faceDirection.x, faceDirection.y, 0);
 				if (w.isJabbable)
@@ -122,7 +128,7 @@ public class PlayerScript : MonoBehaviour
 						shoot (w, dir);
 		}
 	
-		protected void jab (Weapon w, Vector3 dir)
+		public void jab (Weapon w, Vector3 dir)
 		{		
 				if (!w.weaponOut) {
 						rotateWeapon (w);
@@ -134,7 +140,7 @@ public class PlayerScript : MonoBehaviour
 				}
 		}
 	
-		protected void shoot (Weapon w, Vector3 dir)
+		public void shoot (Weapon w, Vector3 dir)
 		{
 				if (!w.weaponOut) {
 						w.attack = Instantiate (w.weapon, transform.position + dir, Quaternion.identity) as GameObject;
@@ -236,8 +242,20 @@ public class PlayerScript : MonoBehaviour
 				else
 						gridMovement ();
 		
-				if (isPlatformer && Input.GetKey (KeyCode.Space)) {
-						transform.position = new Vector3 (transform.position.x, transform.position.y + jumpHeight / 20, 0f);
+				if (isPlatformer && Input.GetKeyDown (KeyCode.Space)) {
+						if (jetpackEnabled) {
+								rigidbody2D.velocity = new Vector2 (0, jumpHeight);
+						} else if (grounded) {
+								rigidbody2D.velocity = new Vector2 (0, jumpHeight);
+								grounded = false;
+						}
+				}
+		
+				if (isPlatformer && Input.GetKeyUp (KeyCode.Space)) {
+						if (grounded) {
+								rigidbody2D.velocity = Vector2.zero;
+								grounded = false;
+						}
 				}
 		}
 

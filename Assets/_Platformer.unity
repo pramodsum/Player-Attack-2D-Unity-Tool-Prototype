@@ -152,6 +152,7 @@ MonoBehaviour:
   isPlatformer: 1
   jumpHeight: 10
   weight: 2
+  grounded: 1
   health: 0
   damage: 0
   _______________________: 0
@@ -240,7 +241,7 @@ GameObject:
   - 61: {fileID: 1233629167}
   m_Layer: 0
   m_Name: grass
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
