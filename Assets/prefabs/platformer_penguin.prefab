@@ -8,9 +8,9 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 400000}
-  - 212: {fileID: 21200000}
   - 60: {fileID: 6000000}
   - 114: {fileID: 11400000}
+  - 212: {fileID: 21200000}
   m_Layer: 0
   m_Name: platformer_penguin
   m_TagString: Untagged
@@ -67,19 +67,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c4bfd1dd6177478381cb71032c8be45, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  health: 0
+  damage: 0
+  inventory:
+  - {fileID: 100000, guid: 3dcdce4eecaca4bc1907f0e912158ea4, type: 2}
+  - {fileID: 100000, guid: d22ab1e981a31460393ad8e1e79a6194, type: 2}
+  itemsCollected: 
+  allowDiagonalMovement: 0
   isPlatformer: 1
   jumpHeight: 10
   weight: 2
+  jetpackEnabled: 1
   _______________________: 0
   weapon1: {fileID: 100000, guid: d22ab1e981a31460393ad8e1e79a6194, type: 2}
   attackKey1: Z
   w1IsShootable: 0
   w1IsJabbable: 1
+  w1Strength: 0
   ________________________: 0
   weapon2: {fileID: 100000, guid: 04e16a54c5e724a688daa6cf17253f62, type: 2}
   attackKey2: X
   w2IsShootable: 1
   w2IsJabbable: 0
+  w2Strength: 0
 --- !u!212 &21200000
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -99,7 +109,7 @@ SpriteRenderer:
   m_LightProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
   m_SortingLayerID: 0
-  m_SortingOrder: 1
+  m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 60992d6744a604d4c84e772461b945b5, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1001 &100100000

@@ -12,12 +12,16 @@ Settings
 ========
 The default values for each of the following variables has been shown. Customize each of these values 
 
+* All enemies **must** have tag "Enemy"
+* The ground (in platformer games) **must** have a tag "Ground"
+*
+
 ```
 /***************************************************************************
  * PLAYER
  **************************************************************************/
-public float health;
-public float damage;  
+public float health = 6f;
+public float damage = 0.5f;  
 
 //Top Down Settings
 public bool allowDiagonalMovement = false;
@@ -26,7 +30,7 @@ public bool allowDiagonalMovement = false;
 public bool isPlatformer = false;
 public float jumpHeight = 50f;
 public float weight = 2f;
-public bool jetpackEnabled;
+public bool jetpackEnabled false;
     
 /***************************************************************************
  * WEAPON 1
@@ -50,7 +54,7 @@ public float w2Strength;
 
 Usage
 =============
-This is just like any other script used in Unity where you can drag and drop it onto an object and the script will appear in that objects inspector. 
+This is just like any other script used in Unity where you can drag and drop it onto an object and the script will appear in that objects inspector. The methods shown below are public and can be called from other classes as well. 
 
 Public Functions
 ================

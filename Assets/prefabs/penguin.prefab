@@ -67,19 +67,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c4bfd1dd6177478381cb71032c8be45, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  health: 6
+  damage: .5
+  inventory: []
+  itemsCollected: 
+  allowDiagonalMovement: 0
   isPlatformer: 0
   jumpHeight: 5
   weight: 0
+  jetpackEnabled: 0
   _______________________: 0
   weapon1: {fileID: 100000, guid: d22ab1e981a31460393ad8e1e79a6194, type: 2}
   attackKey1: Z
   w1IsShootable: 0
   w1IsJabbable: 1
+  w1Strength: 0
   ________________________: 0
   weapon2: {fileID: 100000, guid: 04e16a54c5e724a688daa6cf17253f62, type: 2}
   attackKey2: X
   w2IsShootable: 1
   w2IsJabbable: 0
+  w2Strength: 0
+  _________________________: 0
+  v: {x: 0, y: 0}
 --- !u!212 &21200000
 SpriteRenderer:
   m_ObjectHideFlags: 1

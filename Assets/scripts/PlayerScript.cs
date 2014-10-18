@@ -12,6 +12,7 @@
 using UnityEngine;
 using UnityEditor;
 using System.Collections;
+using System.Collections.Generic;
 
 public class PlayerScript : MonoBehaviour
 {
@@ -46,9 +47,11 @@ public class PlayerScript : MonoBehaviour
 	
 		/****************************************************************************
 		 * PLAYER
-                                                                                		 ****************************************************************************/
-		public float health;
-		public float damage;  
+	   ****************************************************************************/
+		public float health = 6f;
+		public float damage = 0.5f;  
+		public List<GameObject> inventory;
+		public List<int> itemsCollected;
 	
 		//Top Down Settings
 		public bool allowDiagonalMovement = false;
@@ -57,11 +60,12 @@ public class PlayerScript : MonoBehaviour
 		public bool isPlatformer = false;
 		public float jumpHeight = 50f;
 		public float weight = 2f;
-		public bool jetpackEnabled;
+		public bool jetpackEnabled = false;
 
 		//Player private variables
 		bool grounded;
 		Vector2 faceDirection;
+		SpriteRenderer spriteRenderer;
 	
 		//Divider
 		public bool _______________________;
@@ -93,6 +97,10 @@ public class PlayerScript : MonoBehaviour
 		{
 				checkSettings ();
 				initPlayer ();
+
+				for (int i = 0; i < inventory.Count; i++) {
+						itemsCollected.Add (0);
+				}
 		
 				w1 = initWeapon (weapon1, attackKey1.ToLower (), w1IsShootable, w1IsJabbable, w1Strength);
 				w2 = initWeapon (weapon2, attackKey2.ToLower (), w2IsShootable, w2IsJabbable, w2Strength);
@@ -110,11 +118,24 @@ public class PlayerScript : MonoBehaviour
 
 		void OnCollisionEnter2D (Collision2D coll)
 		{
-				if (coll.gameObject.tag == "Enemy")
-						health -= damage;
-				if (coll.gameObject.tag == "Ground") {
+				if (coll.gameObject.tag == "Enemy") {
+						if (w1.weaponOut || w2.weaponOut)
+								Destroy (coll.gameObject);
+						else
+								health -= damage;
+				} else if (coll.gameObject.tag == "Ground" && isPlatformer) {
 						rigidbody2D.velocity = Vector2.zero;
 						grounded = true;
+				} else if (coll.gameObject.tag != "Weapon") {
+						int i = findObjInInventory (inventory, coll.gameObject);
+
+						if (i < 0) {
+								Debug.Log (coll.gameObject.name + " not collectable");
+								return;
+						}
+
+						itemsCollected [i]++;
+						Destroy (coll.gameObject);
 				}
 		}
 	
@@ -126,11 +147,10 @@ public class PlayerScript : MonoBehaviour
 	
 		public void attack (Weapon w)
 		{
-				Vector3 dir = new Vector3 (faceDirection.x, faceDirection.y, 0);
 				if (w.isJabbable)
-						jab (w, dir);
+						jab (w, new Vector3 (faceDirection.x, faceDirection.y, 0));
 				else if (w.isShootable)
-						shoot (w, dir);
+						shoot (w, new Vector3 (faceDirection.x, faceDirection.y, 0));
 		}
 	
 		public void jab (Weapon w, Vector3 dir)
@@ -141,6 +161,7 @@ public class PlayerScript : MonoBehaviour
 			
 						if (!w.attack.transform.parent)
 								w.attack.transform.parent = transform;
+
 						w.weaponOut = true;
 				}
 		}
@@ -149,9 +170,16 @@ public class PlayerScript : MonoBehaviour
 		{
 				if (!w.weaponOut) {
 						w.attack = Instantiate (w.weapon, transform.position + dir, Quaternion.identity) as GameObject;
-//						w.weapon.transform.position += faceDirection;
 						w.weapon.rigidbody2D.velocity += faceDirection * w.speed;
 						w.weaponOut = true;
+				}
+		}
+
+		public void wait (float t)
+		{
+				float time = 0;
+				while (time < t) {
+						time += Time.fixedDeltaTime;
 				}
 		}
 	
@@ -163,6 +191,19 @@ public class PlayerScript : MonoBehaviour
 	
 		private void initPlayer ()
 		{
+				if (health == 0)
+						health = 6f;
+				if (damage == 0)
+						damage = 0.5f;
+
+				if (!collider2D)
+						gameObject.AddComponent<PolygonCollider2D> ();
+		
+				if (!rigidbody2D)
+						gameObject.AddComponent<Rigidbody2D> ();
+
+				rigidbody2D.fixedAngle = true;
+
 				if (isPlatformer) {
 						if (!rigidbody2D)
 								gameObject.AddComponent<Rigidbody2D> ();
@@ -175,6 +216,8 @@ public class PlayerScript : MonoBehaviour
 								rigidbody2D.gravityScale = weight;
 
 						allowDiagonalMovement = true;
+				} else {
+						rigidbody2D.gravityScale = 0;
 				}
 		}
 	
@@ -182,26 +225,22 @@ public class PlayerScript : MonoBehaviour
 		{
 				if (!weapon.collider2D)
 						weapon.AddComponent<PolygonCollider2D> ();
-
-				//Sets isTrigger
-//				if (shoot)
-//				weapon.collider2D.isTrigger = true;
-//				else
-				weapon.collider2D.isTrigger = false;
 		
 				if (!weapon.rigidbody2D)
 						weapon.AddComponent<Rigidbody2D> ();
-		
-				if (!isPlatformer)
-						weapon.rigidbody2D.gravityScale = 0;
-		
-				weapon.rigidbody2D.angularDrag = 0;
 
-				//Sets isKinematic
-//				if (shoot)
-//				weapon.rigidbody2D.isKinematic = true;
-//				else
-				weapon.rigidbody2D.isKinematic = false;
+				weapon.rigidbody2D.gravityScale = 0;
+				weapon.rigidbody2D.mass = 0;
+				weapon.rigidbody2D.angularDrag = 0;
+				weapon.rigidbody2D.fixedAngle = true;
+		
+				if (shoot) {
+						weapon.rigidbody2D.isKinematic = true;
+						weapon.collider2D.isTrigger = true;
+						weapon.rigidbody2D.gravityScale = 1;
+				}
+
+				weapon.gameObject.tag = "Weapon";
 		
 				return new Weapon (weapon, key, shoot, jab, strength);
 		}
@@ -217,6 +256,9 @@ public class PlayerScript : MonoBehaviour
 		
 				if (w2IsJabbable == w2IsShootable) 
 						errorMessage ("Weapon 2 error", "Please pick only one action type for weapon 2");
+
+				if (inventory.Count == 0) 
+						warningMessage ("Warning", "No collectable items have been set!");
 		}
 	
 		private void errorMessage (string title, string msg)
@@ -224,6 +266,13 @@ public class PlayerScript : MonoBehaviour
 				if (Application.isEditor) {
 						EditorUtility.DisplayDialog (title, msg, "Ok");
 						EditorApplication.isPlaying = false;
+				}
+		}
+	
+		private void warningMessage (string title, string msg)
+		{
+				if (Application.isEditor) {
+						EditorUtility.DisplayDialog (title, msg, "Ok");
 				}
 		}
 	
@@ -303,17 +352,15 @@ public class PlayerScript : MonoBehaviour
 	
 		private void getAttack (Weapon w)
 		{
-				if (!string.IsNullOrEmpty (w.attackKey)) {
-						if (Input.GetKeyDown (w.attackKey)) {
-								attack (w);
-						} else if (Input.GetKeyUp (w.attackKey) && w.isJabbable) {
-								w.weaponOut = false;
-								Destroy (w.attack);
-						} 
+				if (Input.GetKeyDown (w.attackKey)) {
+						attack (w);
+				} else if (Input.GetKeyUp (w.attackKey) && w.isJabbable) {
+						w.weaponOut = false;
+						Destroy (w.attack);
+				} 
 			
-						if (w.isShootable)
-								checkShotWeapon (w);
-				}
+				if (w.isShootable)
+						checkShotWeapon (w);
 		}
 
 		//TODO: rotate jab image based on direction 
@@ -330,5 +377,14 @@ public class PlayerScript : MonoBehaviour
 //				}
 ////				Debug.Log ("FACE DIRECTION: " + faceDirection);
 //				Debug.Log (w.weapon.transform.rotation);
+		}
+
+		private int findObjInInventory (List<GameObject> inventory, GameObject obj)
+		{
+				for (int i = 0; i < inventory.Count; i++) {
+						if (obj.name == inventory [i].name)
+								return i;
+				}
+				return -1;
 		}
 }
