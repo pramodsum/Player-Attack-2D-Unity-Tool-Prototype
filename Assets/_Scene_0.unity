@@ -84,7 +84,6 @@ GameObject:
   - 4: {fileID: 165920125}
   - 212: {fileID: 165920124}
   - 60: {fileID: 165920127}
-  - 114: {fileID: 165920126}
   - 114: {fileID: 165920123}
   m_Layer: 0
   m_Name: penguin
@@ -101,7 +100,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 165920122}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cfe1d15461c6b4a45a1b135a33587581, type: 3}
+  m_Script: {fileID: 11500000, guid: 5c4bfd1dd6177478381cb71032c8be45, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   weapon1: {fileID: 100000, guid: b1e2255694e8b4ed4ac04a1783fdb776, type: 2}
@@ -147,17 +146,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 2
---- !u!114 &165920126
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 165920122}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0e48500007df048c39c9f7b72d5c7f5b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!60 &165920127
 PolygonCollider2D:
   m_ObjectHideFlags: 0

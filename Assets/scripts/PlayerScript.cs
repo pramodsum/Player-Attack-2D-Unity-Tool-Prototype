@@ -14,7 +14,7 @@ using UnityEngine;
 using UnityEditor;
 using System.Collections;
 
-public class AttackScript : MonoBehaviour
+public class PlayerScript : MonoBehaviour
 {
 		/****************************************************************************
 		 * 
@@ -28,11 +28,11 @@ public class AttackScript : MonoBehaviour
 				public string attackKey;
 				public bool isShootable = false;
 				public bool isJabbable = false;
-
+		
 				public float speed = 8f;
 				public bool weaponOut = false;
 				public float timeSinceShoot = 0f;
-
+		
 				public Weapon (GameObject w, string a, bool s, bool j)
 				{
 						weapon = w;
@@ -43,9 +43,7 @@ public class AttackScript : MonoBehaviour
 		}
 	
 		/****************************************************************************
-		 * 
 		 * WEAPON 1
-		 * 
 		 ****************************************************************************/
 		Weapon w1;
 		public GameObject weapon1;
@@ -57,23 +55,21 @@ public class AttackScript : MonoBehaviour
 		public bool ____________________;
 	
 		/****************************************************************************
-		 * 
 		 * WEAPON 2
-		 * 
 		 ****************************************************************************/
 		Weapon w2;
 		public GameObject weapon2;
 		public string attackKey2;
 		public bool w2IsShootable = false;
 		public bool w2IsJabbable = false;
-
+	
 		//Weapons Out
-		Vector3 faceDirection;
+		Vector2 faceDirection;
 	
 		void Start ()
 		{
 				checkSettings ();
-
+		
 				w1 = initWeapon (weapon1, attackKey1.ToLower (), w1IsShootable, w1IsJabbable);
 				w2 = initWeapon (weapon2, attackKey2.ToLower (), w2IsShootable, w2IsJabbable);
 		}
@@ -82,7 +78,7 @@ public class AttackScript : MonoBehaviour
 		{
 				//Get Player Movement
 				getMovement ();
-
+		
 				//Get Player Attacks
 				getAttack (w1);
 				getAttack (w2);
@@ -93,31 +89,32 @@ public class AttackScript : MonoBehaviour
 		 * PROTECTED METHODS
 		 * 
 		 ****************************************************************************/
-
+	
 		protected void attack (Weapon w)
 		{
+				Vector3 dir = new Vector3 (faceDirection.x, faceDirection.y, 0);
 				if (w.isJabbable)
-						jab (w);
+						jab (w, dir);
 				else if (w.isShootable)
-						shoot (w);
+						shoot (w, dir);
 		}
-
-		protected void jab (Weapon w)
+	
+		protected void jab (Weapon w, Vector3 dir)
 		{		
 				if (!w.weaponOut) {
-						w.attack = Instantiate (w.weapon, transform.position + faceDirection, Quaternion.identity) as GameObject;
+						w.attack = Instantiate (w.weapon, transform.position + dir, Quaternion.identity) as GameObject;
 			
 						if (!w.attack.transform.parent)
 								w.attack.transform.parent = transform;
 						w.weaponOut = true;
 				}
 		}
-
-		protected void shoot (Weapon w)
+	
+		protected void shoot (Weapon w, Vector3 dir)
 		{
 				if (!w.weaponOut) {
-						w.attack = Instantiate (w.weapon, transform.position + faceDirection, Quaternion.identity) as GameObject;
-						w.weapon.rigidbody2D.velocity = faceDirection * w.speed;
+						w.attack = Instantiate (w.weapon, transform.position + dir, Quaternion.identity) as GameObject;
+						w.weapon.rigidbody2D.velocity += faceDirection * 7.5f;
 						w.weaponOut = true;
 				}
 		}
@@ -172,29 +169,29 @@ public class AttackScript : MonoBehaviour
 						w.timeSinceShoot += Time.fixedDeltaTime;
 						return;
 				}
-
+		
 				w.timeSinceShoot = 0;
 				w.weaponOut = false;
 				Destroy (w.attack);
 		}
-
+	
 		private void getMovement ()
 		{
 				if (Input.GetKey (KeyCode.UpArrow)) {
 						transform.position = new Vector3 (transform.position.x, transform.position.y + 0.1f, 0f);
-						faceDirection = Vector3.up;
+						faceDirection = Vector2.up;
 				} else if (Input.GetKey (KeyCode.DownArrow)) {
 						transform.position = new Vector3 (transform.position.x, transform.position.y - 0.1f, 0f);
-						faceDirection = -Vector3.up;
+						faceDirection = -Vector2.up;
 				} else if (Input.GetKey (KeyCode.RightArrow)) {
 						transform.position = new Vector3 (transform.position.x + 0.1f, transform.position.y, 0f);
-						faceDirection = Vector3.right;
+						faceDirection = Vector2.right;
 				} else if (Input.GetKey (KeyCode.LeftArrow)) {
 						transform.position = new Vector3 (transform.position.x - 0.1f, transform.position.y, 0f);
-						faceDirection = -Vector3.right;
+						faceDirection = -Vector2.right;
 				}
 		}
-
+	
 		private void getAttack (Weapon w)
 		{
 				if (!string.IsNullOrEmpty (w.attackKey)) {
@@ -204,7 +201,7 @@ public class AttackScript : MonoBehaviour
 								w.weaponOut = false;
 								Destroy (w.attack);
 						} 
-		
+			
 						if (w.isShootable)
 								checkShotWeapon (w);
 				}

@@ -1,14 +1,14 @@
-Attack Script Unity
-========================
+Top Down 2D Unity Player Script
+===============================
 
-Set up attacks easily for GameObjects in Unity for 2D games
+Set up attacks easily for GameObjects in Unity for **Top Down** 2D games
 
-AttackScript.cs
+PlayerScript.cs
 ===============
 
-This script is defined as a monobehaviour that can be dragged and dropped onto any object in the unity project.  The purpose of the AttackScript class is to provide a simple attack system for players in a Unity 2D game.  The AttackScript class maintains 2 weapons, custom attack keys and one of 3 different attack methods for each weapon.
+This script is defined as a monobehaviour that can be dragged and dropped onto any object in the unity project.  The purpose of the PlayerScript class is to provide all the basic operations needed in setting up a player in a Unity top down 2D game.  The PlayerScript class maintains 2 weapons, custom attack keys and one of 3 different attack methods for each weapon, item inventory, player movement and direction.
 
-Using the AttackScript
+Using the PlayerScript
 ======================
 This is just like any other script used in Unity where you can drag and drop it onto an object and the script will appear in that objects inspector. If you also used the Editor/ExpInspector.cs file properly you will see a custom inspector area for the ExperienceSystem script in the objects inspector pane.  More about ExpInspector.cs below.
 
