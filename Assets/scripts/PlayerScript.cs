@@ -46,17 +46,22 @@ public class PlayerScript : MonoBehaviour
 	
 		/****************************************************************************
 		 * PLAYER
-		 ****************************************************************************/
-		Vector2 faceDirection;
+                                                                                		 ****************************************************************************/
+		public float health;
+		public float damage;  
+	
+		//Top Down Settings
 		public bool allowDiagonalMovement = false;
+	
+		//Platformer Settings
 		public bool isPlatformer = false;
 		public float jumpHeight = 50f;
 		public float weight = 2f;
 		public bool jetpackEnabled;
-		public float health;
-		public float damage;
 
+		//Player private variables
 		bool grounded;
+		Vector2 faceDirection;
 	
 		//Divider
 		public bool _______________________;
@@ -252,9 +257,8 @@ public class PlayerScript : MonoBehaviour
 				}
 		
 				if (isPlatformer && Input.GetKeyUp (KeyCode.Space)) {
-						if (grounded) {
+						if (!grounded) {
 								rigidbody2D.velocity = Vector2.zero;
-								grounded = false;
 						}
 				}
 		}
