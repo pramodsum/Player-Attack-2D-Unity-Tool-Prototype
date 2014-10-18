@@ -148,19 +148,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c4bfd1dd6177478381cb71032c8be45, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  allowDiagonalMovement: 0
   isPlatformer: 1
   jumpHeight: 10
   weight: 2
+  health: 0
+  damage: 0
   _______________________: 0
   weapon1: {fileID: 100000, guid: d22ab1e981a31460393ad8e1e79a6194, type: 2}
   attackKey1: Z
   w1IsShootable: 0
   w1IsJabbable: 1
+  w1Strength: 0
   ________________________: 0
   weapon2: {fileID: 100000, guid: 04e16a54c5e724a688daa6cf17253f62, type: 2}
   attackKey2: X
   w2IsShootable: 1
   w2IsJabbable: 0
+  w2Strength: 0
 --- !u!60 &821553485
 PolygonCollider2D:
   m_ObjectHideFlags: 0

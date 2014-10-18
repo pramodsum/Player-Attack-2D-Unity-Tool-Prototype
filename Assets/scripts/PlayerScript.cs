@@ -31,22 +31,30 @@ public class PlayerScript : MonoBehaviour
 				public float speed = 8f;
 				public bool weaponOut = false;
 				public float timeSinceShoot = 0f;
+
+				public float strength;
 		
-				public Weapon (GameObject w, string a, bool s, bool j)
+				public Weapon (GameObject w, string a, bool s, bool j, float p)
 				{
 						weapon = w;
 						attackKey = a;
 						isShootable = s;
 						isJabbable = j;
+						strength = p;
 				}
 		}
 	
 		/****************************************************************************
 		 * PLAYER
 		 ****************************************************************************/
+		Vector2 faceDirection;
+		public bool allowDiagonalMovement = false;
 		public bool isPlatformer = false;
 		public float jumpHeight = 5f;
 		public float weight = 0f;
+
+		public float health;
+		public float damage;
 	
 		//Divider
 		public bool _______________________;
@@ -59,6 +67,7 @@ public class PlayerScript : MonoBehaviour
 		public string attackKey1;
 		public bool w1IsShootable = false;
 		public bool w1IsJabbable = false;
+		public float w1Strength;
 	
 		//Divider
 		public bool ________________________;
@@ -71,17 +80,15 @@ public class PlayerScript : MonoBehaviour
 		public string attackKey2;
 		public bool w2IsShootable = false;
 		public bool w2IsJabbable = false;
-	
-		//Weapons Out
-		Vector2 faceDirection;
+		public float w2Strength;
 	
 		void Start ()
 		{
 				checkSettings ();
 				initPlayer ();
 		
-				w1 = initWeapon (weapon1, attackKey1.ToLower (), w1IsShootable, w1IsJabbable);
-				w2 = initWeapon (weapon2, attackKey2.ToLower (), w2IsShootable, w2IsJabbable);
+				w1 = initWeapon (weapon1, attackKey1.ToLower (), w1IsShootable, w1IsJabbable, w1Strength);
+				w2 = initWeapon (weapon2, attackKey2.ToLower (), w2IsShootable, w2IsJabbable, w2Strength);
 		}
 	
 		void FixedUpdate ()
@@ -125,7 +132,8 @@ public class PlayerScript : MonoBehaviour
 		{
 				if (!w.weaponOut) {
 						w.attack = Instantiate (w.weapon, transform.position + dir, Quaternion.identity) as GameObject;
-						w.weapon.rigidbody2D.velocity += faceDirection * 7.5f;
+//						w.weapon.transform.position += faceDirection;
+						w.weapon.rigidbody2D.velocity += faceDirection * w.speed;
 						w.weaponOut = true;
 				}
 		}
@@ -148,14 +156,20 @@ public class PlayerScript : MonoBehaviour
 
 						if (weight > 0)
 								rigidbody2D.gravityScale = weight;
+
+						allowDiagonalMovement = true;
 				}
 		}
 	
-		private Weapon initWeapon (GameObject weapon, string key, bool shoot, bool jab)
+		private Weapon initWeapon (GameObject weapon, string key, bool shoot, bool jab, float strength)
 		{
 				if (!weapon.collider2D)
 						weapon.AddComponent<PolygonCollider2D> ();
-		
+
+				//Sets isTrigger
+//				if (shoot)
+//				weapon.collider2D.isTrigger = true;
+//				else
 				weapon.collider2D.isTrigger = false;
 		
 				if (!weapon.rigidbody2D)
@@ -165,9 +179,14 @@ public class PlayerScript : MonoBehaviour
 						weapon.rigidbody2D.gravityScale = 0;
 		
 				weapon.rigidbody2D.angularDrag = 0;
+
+				//Sets isKinematic
+//				if (shoot)
+//				weapon.rigidbody2D.isKinematic = true;
+//				else
 				weapon.rigidbody2D.isKinematic = false;
 		
-				return new Weapon (weapon, key, shoot, jab);
+				return new Weapon (weapon, key, shoot, jab, strength);
 		}
 	
 		private void checkSettings ()
@@ -206,6 +225,18 @@ public class PlayerScript : MonoBehaviour
 		//TODO: flip player image based on left/right movement
 		private void getMovement ()
 		{
+				if (allowDiagonalMovement) 
+						fluidMovement ();
+				else
+						gridMovement ();
+		
+				if (isPlatformer && Input.GetKey (KeyCode.Space)) {
+						transform.position = new Vector3 (transform.position.x, transform.position.y + jumpHeight / 20, 0f);
+				}
+		}
+
+		private void gridMovement ()
+		{
 				if (Input.GetKey (KeyCode.UpArrow)) {
 						transform.position = new Vector3 (transform.position.x, transform.position.y + 0.1f, 0f);
 						faceDirection = Vector2.up;
@@ -219,9 +250,26 @@ public class PlayerScript : MonoBehaviour
 						transform.position = new Vector3 (transform.position.x - 0.1f, transform.position.y, 0f);
 						faceDirection = -Vector2.right;
 				}
+		}
+
+		private void fluidMovement ()
+		{
 		
-				if (isPlatformer && Input.GetKey (KeyCode.Space)) {
-						transform.position = new Vector3 (transform.position.x, transform.position.y + jumpHeight / 20, 0f);
+				if (Input.GetKey (KeyCode.UpArrow)) {
+						transform.position = new Vector3 (transform.position.x, transform.position.y + 0.1f, 0f);
+						faceDirection = Vector2.up;
+				}
+				if (Input.GetKey (KeyCode.DownArrow)) {
+						transform.position = new Vector3 (transform.position.x, transform.position.y - 0.1f, 0f);
+						faceDirection = -Vector2.up;
+				}
+				if (Input.GetKey (KeyCode.RightArrow)) {
+						transform.position = new Vector3 (transform.position.x + 0.1f, transform.position.y, 0f);
+						faceDirection = Vector2.right;
+				}
+				if (Input.GetKey (KeyCode.LeftArrow)) {
+						transform.position = new Vector3 (transform.position.x - 0.1f, transform.position.y, 0f);
+						faceDirection = -Vector2.right;
 				}
 		}
 	
@@ -243,16 +291,16 @@ public class PlayerScript : MonoBehaviour
 		//TODO: rotate jab image based on direction 
 		private void rotateWeapon (Weapon w)
 		{
-				if (faceDirection == Vector2.up) {
-						w.weapon.transform.rotation.Set (0, 0, 0, 0);
-				} else if (faceDirection == -Vector2.up) {
-						w.weapon.transform.rotation.Set (0, 0, -180, 0);
-				} else if (faceDirection == Vector2.right) {
-						w.weapon.transform.rotation.Set (0, 0, -90, 0);
-				} else if (faceDirection == -Vector2.right) {
-						w.weapon.transform.rotation.Set (0, 0, 90, 0);
-				}
-				Debug.Log ("FACE DIRECTION: " + faceDirection);
-				Debug.Log (w.weapon.transform.rotation);
+//				if (faceDirection.y > 0) {
+//						w.weapon.transform.RotateAround (Vector3.zero, Vector3.up, 0);
+//				} else if (faceDirection.y < 0) {
+//						w.weapon.transform.RotateAround (Vector3.zero, Vector3.up, 180);
+//				} else if (faceDirection.x > 0) {
+//						w.weapon.transform.RotateAround (Vector3.zero, Vector3.up, -90);
+//				} else if (faceDirection.x < 0) {
+//						w.weapon.transform.RotateAround (Vector3.zero, Vector3.up, 90);
+//				}
+////				Debug.Log ("FACE DIRECTION: " + faceDirection);
+//				Debug.Log (w.weapon.transform.rotation);
 		}
 }
