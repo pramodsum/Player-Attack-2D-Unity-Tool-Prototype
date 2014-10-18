@@ -100,6 +100,12 @@ public class PlayerScript : MonoBehaviour
 				getAttack (w1);
 				getAttack (w2);
 		}	
+
+		void OnCollisionEnter2D (Collision2D coll)
+		{
+				if (coll.gameObject.tag == "Enemy")
+						health -= damage;
+		}
 	
 		/****************************************************************************
 		 * 
