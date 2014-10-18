@@ -2,8 +2,7 @@
  * 
  * PLAYER SCRIPT
  * -------------
- * Provides all the basic operations needed in setting up a player in a Unity 
- * top down 2D game.
+ * Provides all the basic operations needed for a player in a 2D game.
  * -------------
  * AUTHOR: SUMEDHA PRAMOD
  * EMAIL: pramods@umich.edu
@@ -43,6 +42,16 @@ public class PlayerScript : MonoBehaviour
 		}
 	
 		/****************************************************************************
+		 * PLAYER
+		 ****************************************************************************/
+		public bool isPlatformer = false;
+		public float jumpHeight = 5f;
+		public float weight = 0f;
+	
+		//Divider
+		public bool _______________________;
+	
+		/****************************************************************************
 		 * WEAPON 1
 		 ****************************************************************************/
 		Weapon w1;
@@ -52,7 +61,7 @@ public class PlayerScript : MonoBehaviour
 		public bool w1IsJabbable = false;
 	
 		//Divider
-		public bool ____________________;
+		public bool ________________________;
 	
 		/****************************************************************************
 		 * WEAPON 2
@@ -69,6 +78,7 @@ public class PlayerScript : MonoBehaviour
 		void Start ()
 		{
 				checkSettings ();
+				initPlayer ();
 		
 				w1 = initWeapon (weapon1, attackKey1.ToLower (), w1IsShootable, w1IsJabbable);
 				w2 = initWeapon (weapon2, attackKey2.ToLower (), w2IsShootable, w2IsJabbable);
@@ -102,6 +112,7 @@ public class PlayerScript : MonoBehaviour
 		protected void jab (Weapon w, Vector3 dir)
 		{		
 				if (!w.weaponOut) {
+						rotateWeapon (w);
 						w.attack = Instantiate (w.weapon, transform.position + dir, Quaternion.identity) as GameObject;
 			
 						if (!w.attack.transform.parent)
@@ -125,6 +136,21 @@ public class PlayerScript : MonoBehaviour
 		 * 
 		 ****************************************************************************/
 	
+		private void initPlayer ()
+		{
+				if (isPlatformer) {
+						if (!rigidbody2D)
+								gameObject.AddComponent<Rigidbody2D> ();
+			
+						rigidbody2D.angularDrag = 0;
+						rigidbody2D.isKinematic = false;
+						rigidbody2D.fixedAngle = true;
+
+						if (weight > 0)
+								rigidbody2D.gravityScale = weight;
+				}
+		}
+	
 		private Weapon initWeapon (GameObject weapon, string key, bool shoot, bool jab)
 		{
 				if (!weapon.collider2D)
@@ -135,7 +161,9 @@ public class PlayerScript : MonoBehaviour
 				if (!weapon.rigidbody2D)
 						weapon.AddComponent<Rigidbody2D> ();
 		
-				weapon.rigidbody2D.gravityScale = 0;
+				if (!isPlatformer)
+						weapon.rigidbody2D.gravityScale = 0;
+		
 				weapon.rigidbody2D.angularDrag = 0;
 				weapon.rigidbody2D.isKinematic = false;
 		
@@ -174,7 +202,8 @@ public class PlayerScript : MonoBehaviour
 				w.weaponOut = false;
 				Destroy (w.attack);
 		}
-	
+
+		//TODO: flip player image based on left/right movement
 		private void getMovement ()
 		{
 				if (Input.GetKey (KeyCode.UpArrow)) {
@@ -189,6 +218,10 @@ public class PlayerScript : MonoBehaviour
 				} else if (Input.GetKey (KeyCode.LeftArrow)) {
 						transform.position = new Vector3 (transform.position.x - 0.1f, transform.position.y, 0f);
 						faceDirection = -Vector2.right;
+				}
+		
+				if (isPlatformer && Input.GetKey (KeyCode.Space)) {
+						transform.position = new Vector3 (transform.position.x, transform.position.y + jumpHeight / 20, 0f);
 				}
 		}
 	
@@ -205,5 +238,21 @@ public class PlayerScript : MonoBehaviour
 						if (w.isShootable)
 								checkShotWeapon (w);
 				}
+		}
+
+		//TODO: rotate jab image based on direction 
+		private void rotateWeapon (Weapon w)
+		{
+				if (faceDirection == Vector2.up) {
+						w.weapon.transform.rotation.Set (0, 0, 0, 0);
+				} else if (faceDirection == -Vector2.up) {
+						w.weapon.transform.rotation.Set (0, 0, -180, 0);
+				} else if (faceDirection == Vector2.right) {
+						w.weapon.transform.rotation.Set (0, 0, -90, 0);
+				} else if (faceDirection == -Vector2.right) {
+						w.weapon.transform.rotation.Set (0, 0, 90, 0);
+				}
+				Debug.Log ("FACE DIRECTION: " + faceDirection);
+				Debug.Log (w.weapon.transform.rotation);
 		}
 }
