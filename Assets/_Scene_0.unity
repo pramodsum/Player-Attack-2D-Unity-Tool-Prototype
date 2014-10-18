@@ -84,8 +84,8 @@ GameObject:
   - 4: {fileID: 165920125}
   - 212: {fileID: 165920124}
   - 60: {fileID: 165920127}
-  - 114: {fileID: 165920123}
   - 114: {fileID: 165920126}
+  - 114: {fileID: 165920123}
   m_Layer: 0
   m_Name: penguin
   m_TagString: Untagged
@@ -111,8 +111,8 @@ MonoBehaviour:
   ____________________: 0
   weapon2: {fileID: 100000, guid: 04e16a54c5e724a688daa6cf17253f62, type: 2}
   attackKey2: X
-  w2IsShootable: 0
-  w2IsJabbable: 1
+  w2IsShootable: 1
+  w2IsJabbable: 0
 --- !u!212 &165920124
 SpriteRenderer:
   m_ObjectHideFlags: 0

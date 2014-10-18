@@ -7,10 +7,13 @@ public class AttackScript : MonoBehaviour
 		protected class Weapon
 		{
 				public GameObject weapon;
-				public GameObject jabAttack;
+				public GameObject attack;
 				public string attackKey;
 				public bool isShootable = false;
 				public bool isJabbable = false;
+
+				public float speed = 8.0f;
+				public bool weaponOut = false;
 
 				public Weapon (GameObject w, string a, bool s, bool j)
 				{
@@ -20,6 +23,14 @@ public class AttackScript : MonoBehaviour
 						isJabbable = j;
 				}
 		}
+
+		enum Direction
+		{
+				North,
+				East,
+				South,
+				West}
+		;
 
 		//Weapon 1
 		Weapon w1;
@@ -40,20 +51,18 @@ public class AttackScript : MonoBehaviour
 
 		//Weapons Out
 		ArrayList weaponsOut;	
+		Vector3 prevPos;
+		Direction faceDirection;
+		Vector3 dir;
 	
 		void Start ()
 		{
 				checkSettings ();
+				prevPos = transform.position;
+				faceDirection = getFaceDirection ();
 
 				w1 = initWeapon (weapon1, attackKey1.ToLower (), w1IsShootable, w1IsJabbable);
-//				GameObject.Instantiate (w1.weapon, transform.position, Quaternion.identity);
-//				w1.weapon.renderer.enabled = false;
-				w1.weapon.transform.parent = transform;
-		
 				w2 = initWeapon (weapon2, attackKey2.ToLower (), w2IsShootable, w2IsJabbable);
-//				GameObject.Instantiate (w2.weapon, transform.position, Quaternion.identity);
-//				w2.weapon.renderer.enabled = false;
-				w2.weapon.transform.parent = transform;
 		}
 	
 		void FixedUpdate ()
@@ -61,15 +70,28 @@ public class AttackScript : MonoBehaviour
 				if (!string.IsNullOrEmpty (w1.attackKey) && !string.IsNullOrEmpty (w2.attackKey)) {
 						if (Input.GetKeyDown (w1.attackKey)) {
 								attack (w1);
-						} else if (Input.GetKeyDown (w2.attackKey)) {
+						} else if (Input.GetKeyUp (w1.attackKey) && w1.isJabbable) {
+								w1.weaponOut = false;
+								Destroy (w1.attack);
+						} 
+
+						if (Input.GetKeyDown (w2.attackKey)) {
 								attack (w2);
+						} else if (Input.GetKeyUp (w2.attackKey) && w2.isJabbable) {
+								w2.weaponOut = false;
+								Destroy (w2.attack);
 						} 
 				}
 		}
 	
 		private Weapon initWeapon (GameObject weapon, string key, bool shoot, bool jab)
 		{
-				weapon.AddComponent<PolygonCollider2D> ();
+				if (!weapon.collider2D)
+						weapon.AddComponent<PolygonCollider2D> ();
+
+				if (!weapon.rigidbody2D)
+						weapon.AddComponent<Rigidbody2D> ();
+
 				weapon.rigidbody2D.gravityScale = 0;
 				weapon.rigidbody2D.angularDrag = 0;
 
@@ -99,12 +121,22 @@ public class AttackScript : MonoBehaviour
 
 		protected void jab (Weapon w)
 		{		
-				w.jabAttack = Instantiate (w.weapon, transform.position, Quaternion.identity) as GameObject;
+				if (!w.weaponOut) {
+						w.attack = Instantiate (w.weapon, transform.position + prevPos, Quaternion.identity) as GameObject;
+			
+						if (!w.attack.transform.parent)
+								w.attack.transform.parent = transform;
+						w.weaponOut = true;
+				}
 		}
 
 		protected void shoot (Weapon w)
 		{
-
+				if (!w.weaponOut) {
+						w.attack = Instantiate (w.weapon, transform.position + prevPos, Quaternion.identity) as GameObject;
+						w.weapon.rigidbody2D.AddForce (Vector2.right);
+						w.weaponOut = true;
+				}
 		}
 
 		private void errorMessage (string title, string msg)
@@ -113,5 +145,25 @@ public class AttackScript : MonoBehaviour
 						EditorUtility.DisplayDialog (title, msg, "Ok");
 						EditorApplication.isPlaying = false;
 				}
+		}
+
+		private Direction getFaceDirection ()
+		{
+				if (prevPos != transform.position) {
+						prevPos = transform.position;
+						if (transform.position.x > prevPos.x) {
+								return Direction.North;
+						}
+						if (transform.position.x < prevPos.x) {
+								return Direction.South;
+						}
+						if (transform.position.y > prevPos.y) {
+								return Direction.East;
+						}
+						if (transform.position.y > prevPos.y) {
+								return Direction.West;
+						}
+				}
+				return Direction.East;
 		}
 }
