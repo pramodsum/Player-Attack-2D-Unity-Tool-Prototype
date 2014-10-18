@@ -12,8 +12,9 @@ public class AttackScript : MonoBehaviour
 				public bool isShootable = false;
 				public bool isJabbable = false;
 
-				public float speed = 8.0f;
+				public float speed = 8f;
 				public bool weaponOut = false;
+				public float timeSinceShoot = 0f;
 
 				public Weapon (GameObject w, string a, bool s, bool j)
 				{
@@ -73,7 +74,7 @@ public class AttackScript : MonoBehaviour
 						} else if (Input.GetKeyUp (w1.attackKey) && w1.isJabbable) {
 								w1.weaponOut = false;
 								Destroy (w1.attack);
-						} 
+						}
 
 						if (Input.GetKeyDown (w2.attackKey)) {
 								attack (w2);
@@ -81,6 +82,11 @@ public class AttackScript : MonoBehaviour
 								w2.weaponOut = false;
 								Destroy (w2.attack);
 						} 
+			
+						if (w1.isShootable)
+								checkShotWeapon (w1);			
+						if (w2.isShootable)
+								checkShotWeapon (w2);
 				}
 		}
 	
@@ -134,7 +140,7 @@ public class AttackScript : MonoBehaviour
 		{
 				if (!w.weaponOut) {
 						w.attack = Instantiate (w.weapon, transform.position + prevPos, Quaternion.identity) as GameObject;
-						w.weapon.rigidbody2D.AddForce (Vector2.right);
+						w.weapon.rigidbody2D.velocity = transform.TransformDirection (Vector3.forward * w.speed);
 						w.weaponOut = true;
 				}
 		}
@@ -165,5 +171,17 @@ public class AttackScript : MonoBehaviour
 						}
 				}
 				return Direction.East;
+		}
+
+		private void checkShotWeapon (Weapon w)
+		{
+				if (w.timeSinceShoot < 1) {
+						w.timeSinceShoot += Time.fixedDeltaTime;
+						return;
+				}
+
+				w.timeSinceShoot = 0;
+				w.weaponOut = false;
+				Destroy (w.attack);
 		}
 }
