@@ -79,6 +79,7 @@ public class PlayerScript : MonoBehaviour
 		public bool w1IsShootable = false;
 		public bool w1IsJabbable = false;
 		public float w1Strength;
+		public bool w1out = false;
 	
 		//Divider
 		public bool ________________________;
@@ -118,10 +119,11 @@ public class PlayerScript : MonoBehaviour
 
 		void OnCollisionEnter2D (Collision2D coll)
 		{
+				Debug.Log (coll.gameObject.name);
 				if (coll.gameObject.tag == "Enemy") {
 						if (w1.weaponOut || w2.weaponOut)
 								Destroy (coll.gameObject);
-						else
+						else 
 								health -= damage;
 				} else if (coll.gameObject.tag == "Ground" && isPlatformer) {
 						rigidbody2D.velocity = Vector2.zero;
@@ -163,6 +165,7 @@ public class PlayerScript : MonoBehaviour
 								w.attack.transform.parent = transform;
 
 						w.weaponOut = true;
+						w1out = true;
 				}
 		}
 	
@@ -234,13 +237,16 @@ public class PlayerScript : MonoBehaviour
 				weapon.rigidbody2D.angularDrag = 0;
 				weapon.rigidbody2D.fixedAngle = true;
 		
+				weapon.rigidbody2D.isKinematic = false;
+				weapon.collider2D.isTrigger = false;
+		
 				if (shoot) {
 						weapon.rigidbody2D.isKinematic = true;
 						weapon.collider2D.isTrigger = true;
 						weapon.rigidbody2D.gravityScale = 1;
 				}
 
-				weapon.gameObject.tag = "Weapon";
+//				weapon.gameObject.tag = "Weapon";
 		
 				return new Weapon (weapon, key, shoot, jab, strength);
 		}
@@ -356,6 +362,7 @@ public class PlayerScript : MonoBehaviour
 						attack (w);
 				} else if (Input.GetKeyUp (w.attackKey) && w.isJabbable) {
 						w.weaponOut = false;
+						w1out = false;
 						Destroy (w.attack);
 				} 
 			

@@ -115,9 +115,10 @@ MonoBehaviour:
   _______________________: 0
   weapon1: {fileID: 100000, guid: d22ab1e981a31460393ad8e1e79a6194, type: 2}
   attackKey1: Z
-  w1IsShootable: 1
-  w1IsJabbable: 0
+  w1IsShootable: 0
+  w1IsJabbable: 1
   w1Strength: 0
+  w1out: 0
   ________________________: 0
   weapon2: {fileID: 100000, guid: 04e16a54c5e724a688daa6cf17253f62, type: 2}
   attackKey2: X
@@ -319,7 +320,7 @@ SpriteRenderer:
   m_LightProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: 21300000, guid: 562b33fe8bd7e4f00b37f4364ab023ef, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
 --- !u!4 &1094333841
@@ -406,7 +407,7 @@ SpriteRenderer:
   m_LightProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: 21300000, guid: 562b33fe8bd7e4f00b37f4364ab023ef, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
 --- !u!4 &1161982280
@@ -474,7 +475,7 @@ Prefab:
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 11400000, guid: 416f03f181c4a474181e0789548b06e1, type: 2}
-    - {fileID: 6000000, guid: 416f03f181c4a474181e0789548b06e1, type: 2}
+    - {fileID: 0}
   m_ParentPrefab: {fileID: 100100000, guid: 416f03f181c4a474181e0789548b06e1, type: 2}
   m_RootGameObject: {fileID: 165920122}
   m_IsPrefabParent: 0
@@ -567,6 +568,10 @@ Prefab:
     - target: {fileID: 400000, guid: b1e2255694e8b4ed4ac04a1783fdb776, type: 2}
       propertyPath: m_RootOrder
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: b1e2255694e8b4ed4ac04a1783fdb776, type: 2}
+      propertyPath: m_TagString
+      value: Enemy
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: b1e2255694e8b4ed4ac04a1783fdb776, type: 2}
@@ -670,7 +675,7 @@ GameObject:
   - 60: {fileID: 1654738440}
   m_Layer: 0
   m_Name: fireball
-  m_TagString: Weapon
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

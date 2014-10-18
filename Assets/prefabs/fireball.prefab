@@ -13,7 +13,7 @@ GameObject:
   - 60: {fileID: 6000028}
   m_Layer: 0
   m_Name: fireball
-  m_TagString: Weapon
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
