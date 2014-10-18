@@ -32,16 +32,13 @@ public class PlayerScript : MonoBehaviour
 				public float speed = 8f;
 				public bool weaponOut = false;
 				public float timeSinceBomb = 0f;
-
-				public float strength;
 		
-				public Weapon (GameObject w, string a, bool s, bool j, float p)
+				public Weapon (GameObject w, string a, bool s, bool j)
 				{
 						weapon = w;
 						attackKey = a;
 						isBombable = s;
 						isJabbable = j;
-						strength = p;
 				}
 		}
 	
@@ -78,7 +75,6 @@ public class PlayerScript : MonoBehaviour
 		public string attackKey1;
 		public bool w1IsBombable = false;
 		public bool w1IsJabbable = false;
-		public float w1Strength;
 	
 		//Divider
 		public bool ________________________;
@@ -91,7 +87,6 @@ public class PlayerScript : MonoBehaviour
 		public string attackKey2;
 		public bool w2IsBombable = false;
 		public bool w2IsJabbable = false;
-		public float w2Strength;
 	
 		void Start ()
 		{
@@ -102,8 +97,8 @@ public class PlayerScript : MonoBehaviour
 						itemsCollected.Add (0);
 				}
 		
-				w1 = initWeapon (weapon1, attackKey1.ToLower (), w1IsBombable, w1IsJabbable, w1Strength);
-				w2 = initWeapon (weapon2, attackKey2.ToLower (), w2IsBombable, w2IsJabbable, w2Strength);
+				w1 = initWeapon (weapon1, attackKey1.ToLower (), w1IsBombable, w1IsJabbable);
+				w2 = initWeapon (weapon2, attackKey2.ToLower (), w2IsBombable, w2IsJabbable);
 		}
 	
 		void FixedUpdate ()
@@ -211,7 +206,7 @@ public class PlayerScript : MonoBehaviour
 				}
 		}
 	
-		private Weapon initWeapon (GameObject weapon, string key, bool bomb, bool jab, float strength)
+		private Weapon initWeapon (GameObject weapon, string key, bool bomb, bool jab)
 		{
 				if (!weapon.collider2D && jab)
 						weapon.AddComponent<PolygonCollider2D> ();
@@ -238,7 +233,7 @@ public class PlayerScript : MonoBehaviour
 						weapon.GetComponent<WeaponScript> ().isBombable = true;
 				}
 		
-				return new Weapon (weapon, key, bomb, jab, strength);
+				return new Weapon (weapon, key, bomb, jab);
 		}
 	
 		private void checkSettings ()
@@ -342,22 +337,6 @@ public class PlayerScript : MonoBehaviour
 						w.weaponOut = false;
 						Destroy (w.attack);
 				} 
-		}
-
-		//TODO: rotate jab image based on direction 
-		private void rotateWeapon (Weapon w)
-		{
-//				if (faceDirection.y > 0) {
-//						w.weapon.transform.RotateAround (Vector3.zero, Vector3.up, 0);
-//				} else if (faceDirection.y < 0) {
-//						w.weapon.transform.RotateAround (Vector3.zero, Vector3.up, 180);
-//				} else if (faceDirection.x > 0) {
-//						w.weapon.transform.RotateAround (Vector3.zero, Vector3.up, -90);
-//				} else if (faceDirection.x < 0) {
-//						w.weapon.transform.RotateAround (Vector3.zero, Vector3.up, 90);
-//				}
-////				Debug.Log ("FACE DIRECTION: " + faceDirection);
-//				Debug.Log (w.weapon.transform.rotation);
 		}
 
 		private int findObjInInventory (List<GameObject> inventory, GameObject obj)

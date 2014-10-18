@@ -1,4 +1,14 @@
-﻿using UnityEngine;
+﻿/****************************************************************************
+ * 
+ * WEAPON SCRIPT
+ * -------------
+ * Performs collision actions for weapons
+ * -------------
+ * AUTHOR: SUMEDHA PRAMOD
+ * EMAIL: pramods@umich.edu
+ * 
+ ****************************************************************************/
+ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
