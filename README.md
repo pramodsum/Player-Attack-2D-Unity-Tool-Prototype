@@ -1,4 +1,4 @@
-Attack Tool Script Unity
+Attack Script Unity
 ========================
 
 Set up attacks easily for GameObjects in Unity for 2D games
@@ -6,13 +6,11 @@ Set up attacks easily for GameObjects in Unity for 2D games
 AttackScript.cs
 ===============
 
-This script is defined as a monobehaviour that can be dragged and dropped onto any object in the unity project.  The purpose of the ExperienceSystem class is to provide an experience point based system of leveling up.  The ExperienceSystem class maintains the objects current experience points, current level, maximum level, an experience table, an experience point multiplier, and other bookkeeping variables.
+This script is defined as a monobehaviour that can be dragged and dropped onto any object in the unity project.  The purpose of the AttackScript class is to provide a simple attack system for players in a Unity 2D game.  The AttackScript class maintains 2 weapons, custom attack keys and one of 3 different attack methods for each weapon.
 
-There are two ways of using the ExperienceSystem class in a Unity project.  You can either use it as a Monobehaviour which can be dragged and dropped onto another object in the unity project/hierarchy pane or it can be defined as a standalone class in a "has-a" relationship to your objects.  The two are demonstrated below.
-
-AttackScript as a Monobehaviour
-==================================
-This is just like any other script used in Unity where you can drag and drop it onto an object and the script will appear in that objects inspector.  If you also used the Editor/ExpInspector.cs file properly you will see a custom inspector area for the ExperienceSystem script in the objects inspector pane.  More about ExpInspector.cs below.
+Using the AttackScript
+======================
+This is just like any other script used in Unity where you can drag and drop it onto an object and the script will appear in that objects inspector. If you also used the Editor/ExpInspector.cs file properly you will see a custom inspector area for the ExperienceSystem script in the objects inspector pane.  More about ExpInspector.cs below.
 
 If you simply drag and drop the script onto the object you can access the experience system by doing the following.
 
@@ -26,18 +24,9 @@ First that you MUST call .initialize on your ExperienceSystem object once you ha
 
 Second this means that if you are using a monobehaviour version of the ExperienceSystem there should only be one copy of it.  Therefore if you want different ExperienceSystems for different abilities this will not work.  If you want to have multiple ExperienceSystem objects I would recommend the ExperienceSystem as standalone class below.
 
-ExperienceSystem as standalone class
-====================================
-If you want to be able to have as many ExperienceSystem objects as you want this is the best route to go.  You can make your object have various instances of the class (a "has-a" relationship). You will have to modify the code briefly to do so.  To fix the code do the following:
 
-- Delete the ": Monobehaviour" in the class definition 
-- Uncomment the constructors/destructor at the bottom of the code
-
-You should be good to go to create ExperienceSystem objects through code rather than the inspector now.  You do not need to call initialize on these objects becaues the constructors do the same job.
-
-
-Example Usage as Monobehaviour
-==============
+Example Usage
+=============
 ```
 public class Player : Monobehaviour {
 
