@@ -115,6 +115,18 @@ public void jab (Weapon w, Vector3 dir);
 //EFFECTS: Destroys all enemies within a 5.0f range of bomb location
 //RETURNS: nothing
 public void shoot (Weapon w, Vector3 dir);
+    
+//REQUIRES: item name
+//MODIFIES: nothing
+//EFFECTS: Determines if player has item in their inventory
+//RETURNS: true if player has at least 1 instance of item in inventory
+public bool hasItem (string name);
+    
+//REQUIRES: item name
+//MODIFIES: nothing
+//EFFECTS: Gets the number of times item was collected in the inventory
+//RETURNS: number of instances of item collected in inventory
+public int getInventoryCount (string name);
 
 ```
 
@@ -182,6 +194,12 @@ private void getAttack (Weapon w);
 //EFFECTS: finds index of object in inventory
 //RETURNS: index of object in inventory
 private int findObjInInventory (List<GameObject> inventory, GameObject obj);
+
+//REQUIRES: inventory list, item name
+//MODIFIES: nothing
+//EFFECTS: finds index of object in inventory
+//RETURNS: index of object in inventory
+private int findObjInInventory (List<GameObject> inventory, string objName);
 
 ```
 

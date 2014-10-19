@@ -186,6 +186,28 @@ public class PlayerScript : MonoBehaviour
 				w.attack = Instantiate (w.weapon, transform.position + dir, Quaternion.identity) as GameObject;
 				w.weaponOut = true;
 		}
+    
+		//REQUIRES: item name
+		//MODIFIES: nothing
+		//EFFECTS: Determines if player has item in their inventory
+		//RETURNS: true if player has at least 1 instance of item in inventory
+		public bool hasItem (string name)
+		{
+				int index = findObjInInventory (inventory, name);
+				if (itemsCollected [index] > 0)
+						return true;
+				return false;
+		}
+		    
+		//REQUIRES: item name
+		//MODIFIES: nothing
+		//EFFECTS: Gets the number of times item was collected in the inventory
+		//RETURNS: number of instances of item collected in inventory
+		public int getInventoryCount (string name)
+		{
+				int index = findObjInInventory (inventory, name);
+				return itemsCollected [index];
+		}
 	
 		/****************************************************************************
 		 * 
@@ -434,6 +456,20 @@ public class PlayerScript : MonoBehaviour
 				for (int i = 0; i < inventory.Count; i++) {
 						//matches object to inventory objects by name
 						if (obj.name == inventory [i].name)
+								return i;
+				}
+				return -1;
+		}
+
+		//REQUIRES: inventory list, collided item
+		//MODIFIES: nothing
+		//EFFECTS: finds index of object in inventory
+		//RETURNS: index of object in inventory
+		private int findObjInInventory (List<GameObject> inventory, string objName)
+		{
+				for (int i = 0; i < inventory.Count; i++) {
+						//matches object to inventory objects by name
+						if (objName == inventory [i].name)
 								return i;
 				}
 				return -1;
