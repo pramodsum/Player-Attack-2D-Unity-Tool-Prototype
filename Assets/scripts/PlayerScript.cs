@@ -93,10 +93,12 @@ public class PlayerScript : MonoBehaviour
 				checkSettings ();
 				initPlayer ();
 
+				//add count for each possible item in inventory
 				for (int i = 0; i < inventory.Count; i++) {
 						itemsCollected.Add (0);
 				}
 		
+				//Initialize weapons
 				w1 = initWeapon (weapon1, attackKey1.ToLower (), w1IsBombable, w1IsJabbable);
 				w2 = initWeapon (weapon2, attackKey2.ToLower (), w2IsBombable, w2IsJabbable);
 		}
@@ -113,13 +115,19 @@ public class PlayerScript : MonoBehaviour
 
 		void OnCollisionEnter2D (Collision2D coll)
 		{
-				Debug.Log (coll.gameObject.name);
+				Debug.Log ("Player collided w/ " + coll.gameObject.name);
+				
+				//Depletes player health on collision with enemy
 				if (coll.gameObject.tag == "Enemy") {
 						health -= damage;
-				} else if (coll.gameObject.tag == "Ground" && isPlatformer) {
+				} 
+				//Grounds player after jump in Platformer 2D games
+				else if (coll.gameObject.tag == "Ground" && isPlatformer) {
 						rigidbody2D.velocity = Vector2.zero;
 						grounded = true;
-				} else if (coll.gameObject.tag != "Weapon") {
+				} 
+				//Collects inventory items
+				else if (coll.gameObject.tag != "Weapon") {
 						int i = findObjInInventory (inventory, coll.gameObject);
 
 						if (i < 0) {
@@ -138,34 +146,45 @@ public class PlayerScript : MonoBehaviour
 		 * 
 		 ****************************************************************************/
 	
+
+		//REQUIRES: Weapon
+		//MODIFIES: nothing
+		//EFFECTS: Either jabs weapon or throws bomb from player location
+		//RETURNS: nothing
 		public void attack (Weapon w)
 		{
-				if (w.isJabbable)
-						jab (w, new Vector3 (faceDirection.x, faceDirection.y, 0));
-				else if (w.isBombable)
-						bomb (w, new Vector3 (faceDirection.x, faceDirection.y, 0));
+				//Only attack if that weapon isn't already being used
+				if (w.weaponOut) {
+						if (w.isJabbable)
+								jab (w, new Vector3 (faceDirection.x, faceDirection.y, 0));
+						else if (w.isBombable)
+								bomb (w, new Vector3 (faceDirection.x, faceDirection.y, 0));
+				}
 		}
-	
+		
+		//REQUIRES: Weapon, direction faced by player
+		//MODIFIES: nothing
+		//EFFECTS: Instantiates weapon for as long as attackKey is pressed
+		//RETURNS: nothing
 		public void jab (Weapon w, Vector3 dir)
 		{		
-				if (!w.weaponOut) {
-						rotateWeapon (w);
-						w.attack = Instantiate (w.weapon, transform.position + dir, Quaternion.identity) as GameObject;
-			
-						if (!w.attack.transform.parent)
-								w.attack.transform.parent = transform;
+				w.attack = Instantiate (w.weapon, transform.position + dir, Quaternion.identity) as GameObject;
+		
+				//Sets weapon parent as player
+				if (!w.attack.transform.parent)
+						w.attack.transform.parent = transform;
 
-						w.weaponOut = true;
-				}
+				w.weaponOut = true;
 		}
 	
+		//REQUIRES: Weapon, direction faced by player
+		//MODIFIES: nothing
+		//EFFECTS: Destroys all enemies within a 5.0f range of bomb location
+		//RETURNS: nothing
 		public void bomb (Weapon w, Vector3 dir)
 		{
-				if (!w.weaponOut) {
-						w.attack = Instantiate (w.weapon, transform.position + dir, Quaternion.identity) as GameObject;
-						w.weapon.rigidbody2D.velocity = faceDirection * w.speed;
-						w.weaponOut = true;
-				}
+				w.attack = Instantiate (w.weapon, transform.position + dir, Quaternion.identity) as GameObject;
+				w.weaponOut = true;
 		}
 	
 		/****************************************************************************
@@ -173,65 +192,82 @@ public class PlayerScript : MonoBehaviour
 		 * PRIVATE METHODS
 		 * 
 		 ****************************************************************************/
-	
+
+		//REQUIRES: nothing
+		//MODIFIES: Player health, damage, collider + settings, rigidbody + settings
+		//EFFECTS: initializes player with settings
+		//RETURNS: nothing
 		private void initPlayer ()
 		{
+				//Sets default values for player health and damage
 				if (health == 0)
 						health = 6f;
 				if (damage == 0)
 						damage = 0.5f;
 
+				//Adds colliders and rigidbody if not already added
 				if (!collider2D)
 						gameObject.AddComponent<PolygonCollider2D> ();
-		
 				if (!rigidbody2D)
 						gameObject.AddComponent<Rigidbody2D> ();
 
+				//Ensures that player doesn't rotate on collisions
 				rigidbody2D.fixedAngle = true;
+				rigidbody2D.isKinematic = false;
+				collider2D.isTrigger = false;
+				gameObject.tag = "Player";
 
+				//Platformer Player Settings
 				if (isPlatformer) {
-						if (!rigidbody2D)
-								gameObject.AddComponent<Rigidbody2D> ();
-			
 						rigidbody2D.angularDrag = 0;
-						rigidbody2D.isKinematic = false;
-						rigidbody2D.fixedAngle = true;
 
+						//Sets player mass to specified weight
 						if (weight > 0)
 								rigidbody2D.gravityScale = weight;
 
+						//Default disables grid-like movement
 						allowDiagonalMovement = true;
 				} else {
+						//Player shouldn't have gravity in top down games
 						rigidbody2D.gravityScale = 0;
 				}
 		}
 	
+		//REQUIRES: weapon gameobject, attack key, is bombable, is jabbale
+		//MODIFIES: Weapon attack key, script, collider + settings, 
+		//					rigidbody + settings
+		//EFFECTS: initializes weapon with settings
+		//RETURNS: Weapon object
 		private Weapon initWeapon (GameObject weapon, string key, bool bomb, bool jab)
 		{
-				if (!weapon.collider2D && jab)
+				//Adds colliders and rigidbody if not already added
+				if (!weapon.collider2D)
 						weapon.AddComponent<PolygonCollider2D> ();
-				if (!weapon.collider2D && bomb)
-						weapon.AddComponent<BoxCollider2D> ();
-		
 				if (!weapon.rigidbody2D)
 						weapon.AddComponent<Rigidbody2D> ();
 
-				weapon.rigidbody2D.gravityScale = 0;
-				weapon.rigidbody2D.mass = 0;
-				weapon.rigidbody2D.angularDrag = 0;
-				weapon.rigidbody2D.fixedAngle = true;
-		
-				weapon.gameObject.tag = "Weapon";
+				//Weapon shouldn't have gravity or mass in top down games
+				if (!isPlatformer) {
+						weapon.rigidbody2D.gravityScale = 0;
+						weapon.rigidbody2D.mass = 0;
+				} else {
+						weapon.rigidbody2D.gravityScale = 1;
+						weapon.rigidbody2D.mass = 1;
+				}
 
+				//Adds weapon script it not already added
 				if (!weapon.GetComponent<WeaponScript> ())
 						weapon.AddComponent<WeaponScript> ();
 
-				if (jab) {
-						weapon.rigidbody2D.isKinematic = false;
-						weapon.collider2D.isTrigger = false;
-				} else {
+				weapon.rigidbody2D.angularDrag = 0;
+				weapon.rigidbody2D.fixedAngle = true;
+				weapon.gameObject.tag = "Weapon";
+				weapon.rigidbody2D.isKinematic = false;
+				weapon.collider2D.isTrigger = false;
+
+				//Ensures WeaponScript knows if weapon is a bomb
+				if (bomb)
 						weapon.GetComponent<WeaponScript> ().isBombable = true;
-				}
 		
 				return new Weapon (weapon, key, bomb, jab);
 		}
