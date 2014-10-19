@@ -210,13 +210,11 @@ MonoBehaviour:
   attackKey1: Z
   w1IsBombable: 0
   w1IsJabbable: 1
-  w1Strength: 0
   ________________________: 0
   weapon2: {fileID: 100000, guid: 04e16a54c5e724a688daa6cf17253f62, type: 2}
   attackKey2: X
   w2IsBombable: 1
   w2IsJabbable: 0
-  w2Strength: 0
 --- !u!212 &821553486
 SpriteRenderer:
   m_ObjectHideFlags: 0

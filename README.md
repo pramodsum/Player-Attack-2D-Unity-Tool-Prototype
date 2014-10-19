@@ -66,8 +66,8 @@ This is just like any other script used in Unity where you can drag and drop it 
 
 **Make sure to add WeaponScript.cs as an asset to the project as well.** If you choose to use your own Weapon Collision Script, replace the line in initWeapon() which adds WeaponScript as a component to each generated weapon.
 
-Public Functions/Classes
-========================
+Public Methods/Classes
+======================
 
 ```C#
 /****************************************************************************
@@ -115,5 +115,72 @@ public void jab (Weapon w, Vector3 dir);
 //EFFECTS: Destroys all enemies within a 5.0f range of bomb location
 //RETURNS: nothing
 public void shoot (Weapon w, Vector3 dir);
+
+```
+
+Private Methods
+===============
+
+```C#
+//REQUIRES: nothing
+//MODIFIES: Player health, damage, collider + settings, rigidbody + settings
+//EFFECTS: initializes player with settings
+//RETURNS: nothing
+private void initPlayer ();
+
+//REQUIRES: weapon gameobject, attack key, is bombable, is jabbale
+//MODIFIES: Weapon attack key, script, collider + settings, 
+//          rigidbody + settings
+//EFFECTS: initializes weapon with settings
+//RETURNS: Weapon object
+private Weapon initWeapon (GameObject weapon, string key, bool bomb, bool jab);
+
+//REQUIRES: nothing
+//MODIFIES: nothing
+//EFFECTS: Checks that all required player and weapon settings have been set
+//RETURNS: nothing
+private void checkSettings ();
+
+//REQUIRES: error title and message
+//MODIFIES: nothing
+//EFFECTS: Shows error dialog and stops game build in editor
+//RETURNS: nothing
+private void errorMessage (string title, string msg);
+
+//REQUIRES: error title and message
+//MODIFIES: nothing
+//EFFECTS: Shows warning dialog in editor
+//RETURNS: nothing
+private void warningMessage (string title, string msg);
+
+//REQUIRES: nothing
+//MODIFIES: player transform position
+//EFFECTS: moves player according
+//RETURNS: nothing
+private void getMovement ();
+
+//REQUIRES: nothing
+//MODIFIES: player transform position
+//EFFECTS: moves player in grid-like manner
+//RETURNS: nothing
+private void gridMovement ();
+
+//REQUIRES: nothing
+//MODIFIES: player transform position
+//EFFECTS: moves player allowing for diagonal movement
+//RETURNS: nothing
+private void fluidMovement ();
+
+//REQUIRES: Weapon object
+//MODIFIES: anything colliding with weapon or enemy
+//EFFECTS: Gets attack and fires off respective method 
+//RETURNS: nothing
+private void getAttack (Weapon w);
+
+//REQUIRES: inventory list, collided item
+//MODIFIES: nothing
+//EFFECTS: finds index of object in inventory
+//RETURNS: index of object in inventory
+private int findObjInInventory (List<GameObject> inventory, GameObject obj);
 
 ```

@@ -272,22 +272,33 @@ public class PlayerScript : MonoBehaviour
 				return new Weapon (weapon, key, bomb, jab);
 		}
 	
+		//REQUIRES: nothing
+		//MODIFIES: nothing
+		//EFFECTS: Checks that all required player and weapon settings have been set
+		//RETURNS: nothing
 		private void checkSettings ()
 		{
 				//Ensure attack keys are set
 				if (string.IsNullOrEmpty (attackKey1) || string.IsNullOrEmpty (attackKey2)) 
 						errorMessage ("Assign Attack Keys", "Please Assign Attack Keys for Player");
 		
+				//Weapon 1 can't be jabbable AND bombable
 				if (w1IsJabbable == w1IsBombable) 
 						errorMessage ("Weapon 1 Error", "Please pick only one action type for weapon 1");
 		
+				//Weapon 2 can't be jabbable AND bombable
 				if (w2IsJabbable == w2IsBombable) 
 						errorMessage ("Weapon 2 error", "Please pick only one action type for weapon 2");
 
+				//Warns if no items are inventory
 				if (inventory.Count == 0) 
 						warningMessage ("Warning", "No collectable items have been set!");
 		}
-	
+		
+		//REQUIRES: error title and message
+		//MODIFIES: nothing
+		//EFFECTS: Shows error dialog and stops game build in editor
+		//RETURNS: nothing
 		private void errorMessage (string title, string msg)
 		{
 				if (Application.isEditor) {
@@ -295,7 +306,11 @@ public class PlayerScript : MonoBehaviour
 						EditorApplication.isPlaying = false;
 				}
 		}
-	
+		
+		//REQUIRES: error title and message
+		//MODIFIES: nothing
+		//EFFECTS: Shows warning dialog in editor
+		//RETURNS: nothing
 		private void warningMessage (string title, string msg)
 		{
 				if (Application.isEditor) {
@@ -303,23 +318,33 @@ public class PlayerScript : MonoBehaviour
 				}
 		}
 
-		//TODO: flip player image based on left/right movement
+		//REQUIRES: nothing
+		//MODIFIES: player transform position
+		//EFFECTS: moves player according
+		//RETURNS: nothing
 		private void getMovement ()
 		{
+				//Allows player to move diagonally
 				if (allowDiagonalMovement) 
 						fluidMovement ();
-				else
+				//Restricts player to grid movement
+				else 
 						gridMovement ();
 		
+				//Makes player jump in Platformer 2D games
 				if (isPlatformer && Input.GetKeyDown (KeyCode.Space)) {
+						//Allows for constant flying on holding space key 
 						if (jetpackEnabled) {
 								rigidbody2D.velocity = new Vector2 (0, jumpHeight);
-						} else if (grounded) {
+						} 
+						//Jumps normally if player can't fly and is grounded
+						else if (grounded) {
 								rigidbody2D.velocity = new Vector2 (0, jumpHeight);
 								grounded = false;
 						}
 				}
 		
+				//Resets Platformer player velocity to 0 when already in the ground
 				if (isPlatformer && Input.GetKeyUp (KeyCode.Space)) {
 						if (!grounded) {
 								rigidbody2D.velocity = Vector2.zero;
@@ -327,57 +352,87 @@ public class PlayerScript : MonoBehaviour
 				}
 		}
 
+		//REQUIRES: nothing
+		//MODIFIES: player transform position
+		//EFFECTS: moves player in grid-like manner
+		//RETURNS: nothing
 		private void gridMovement ()
 		{
+				//Up
 				if (Input.GetKey (KeyCode.UpArrow)) {
 						transform.position = new Vector3 (transform.position.x, transform.position.y + 0.1f, 0f);
 						faceDirection = Vector2.up;
-				} else if (Input.GetKey (KeyCode.DownArrow)) {
+				} 
+				//Down
+				else if (Input.GetKey (KeyCode.DownArrow)) {
 						transform.position = new Vector3 (transform.position.x, transform.position.y - 0.1f, 0f);
 						faceDirection = -Vector2.up;
-				} else if (Input.GetKey (KeyCode.RightArrow)) {
+				} 
+				//Right
+				else if (Input.GetKey (KeyCode.RightArrow)) {
 						transform.position = new Vector3 (transform.position.x + 0.1f, transform.position.y, 0f);
 						faceDirection = Vector2.right;
-				} else if (Input.GetKey (KeyCode.LeftArrow)) {
+				} 
+				//Left
+				else if (Input.GetKey (KeyCode.LeftArrow)) {
 						transform.position = new Vector3 (transform.position.x - 0.1f, transform.position.y, 0f);
 						faceDirection = -Vector2.right;
 				}
 		}
 
+		//REQUIRES: nothing
+		//MODIFIES: player transform position
+		//EFFECTS: moves player allowing for diagonal movement
+		//RETURNS: nothing
 		private void fluidMovement ()
 		{
-		
+				//Up
 				if (Input.GetKey (KeyCode.UpArrow)) {
 						transform.position = new Vector3 (transform.position.x, transform.position.y + 0.1f, 0f);
 						faceDirection = Vector2.up;
 				}
+				//Down
 				if (Input.GetKey (KeyCode.DownArrow)) {
 						transform.position = new Vector3 (transform.position.x, transform.position.y - 0.1f, 0f);
 						faceDirection = -Vector2.up;
 				}
+				//Right
 				if (Input.GetKey (KeyCode.RightArrow)) {
 						transform.position = new Vector3 (transform.position.x + 0.1f, transform.position.y, 0f);
 						faceDirection = Vector2.right;
 				}
+				//Left
 				if (Input.GetKey (KeyCode.LeftArrow)) {
 						transform.position = new Vector3 (transform.position.x - 0.1f, transform.position.y, 0f);
 						faceDirection = -Vector2.right;
 				}
 		}
-	
+
+		//REQUIRES: Weapon object
+		//MODIFIES: anything colliding with weapon or enemy
+		//EFFECTS: Gets attack and fires off respective method 
+		//RETURNS: nothing
 		private void getAttack (Weapon w)
 		{
+				//Jabs weapon
 				if (Input.GetKeyDown (w.attackKey)) {
 						attack (w);
-				} else if (Input.GetKeyUp (w.attackKey) && w.isJabbable) {
+				} 
+				//Retracts jabbable weapon
+				if (Input.GetKeyUp (w.attackKey) && w.isJabbable) {
 						w.weaponOut = false;
 						Destroy (w.attack);
 				} 
 		}
 
+		//REQUIRES: inventory list, collided item
+		//MODIFIES: nothing
+		//EFFECTS: finds index of object in inventory
+		//RETURNS: index of object in inventory
 		private int findObjInInventory (List<GameObject> inventory, GameObject obj)
 		{
 				for (int i = 0; i < inventory.Count; i++) {
+						//matches object to inventory objects by name
 						if (obj.name == inventory [i].name)
 								return i;
 				}

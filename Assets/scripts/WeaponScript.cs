@@ -8,7 +8,7 @@
  * EMAIL: pramods@umich.edu
  * 
  ****************************************************************************/
- using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -16,6 +16,7 @@ public class WeaponScript : MonoBehaviour
 {	
 		public bool isBombable = false;
 		public float timeLeft;
+		public float range = 5.0f;
 
 		void OnCollisionEnter2D (Collision2D coll)
 		{
@@ -26,12 +27,19 @@ public class WeaponScript : MonoBehaviour
 						StartCoroutine (wait (2f));
 		}
 	
+		//REQUIRES: time to wait
+		//MODIFIES: enemies within the radius of bomb
+		//EFFECTS: waits t seconds then destroys all objects w/in range of bomb, then
+		//				 the bomb self destructs
+		//RETURNS: nothing
 		public IEnumerator wait (float t)
 		{
 				yield return new WaitForSeconds (t);
 
-				Collider2D[] colliders = Physics2D.OverlapCircleAll (transform.position, 5f);
+				//Gets all objects within range of bomb
+				Collider2D[] colliders = Physics2D.OverlapCircleAll (transform.position, range);
 		
+				//Destroys enemy objects in range of bomb
 				foreach (Collider2D col in colliders) {
 						Debug.Log (col.name + " in range of bomb");
 						if (col.tag == "Enemy") {
@@ -39,6 +47,8 @@ public class WeaponScript : MonoBehaviour
 				
 						}
 				}
+
+				//Self destructs bomb
 				Destroy (this.gameObject);
 		}
 }
