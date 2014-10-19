@@ -184,3 +184,25 @@ private void getAttack (Weapon w);
 private int findObjInInventory (List<GameObject> inventory, GameObject obj);
 
 ```
+
+WeaponScript
+============
+
+```C#
+public class WeaponScript : MonoBehaviour
+{ 
+    public bool isBombable = false;
+    public float timeLeft;
+    public float range = 5.0f;
+
+    void OnCollisionEnter2D (Collision2D coll);
+  
+    //REQUIRES: time to wait
+    //MODIFIES: enemies within the radius of bomb
+    //EFFECTS: waits t seconds then destroys all objects w/in range of bomb, then
+    //         the bomb self destructs
+    //RETURNS: nothing
+    public IEnumerator wait (float t);
+}
+
+```
